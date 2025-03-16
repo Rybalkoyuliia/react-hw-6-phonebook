@@ -1,5 +1,9 @@
 import React from 'react';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { getContacts } from '../../redux/selectors';
+import { addContact } from '../../redux/actions';
+
 import ReactInputMask from 'react-input-mask';
 
 import {
@@ -10,12 +14,19 @@ import {
   StyledLabel,
 } from './ContactForm.styled';
 
-export const ContactForm = ({ contactList, setValue }) => {
+export const ContactForm = () => {
+  const dispatch = useDispatch();
+  const contactList = useSelector(getContacts);
+
   const handleAddContact = e => {
     e.preventDefault();
     const form = e.currentTarget;
     const addedName = form.elements.name.value;
     const addedPhone = form.elements.number.value;
+
+    const newContact = { name: addedName, number: addedPhone };
+    dispatch(addContact(newContact));
+
     const currentContacts = contactList || [];
 
     const exisingContact = currentContacts.some(
@@ -42,8 +53,6 @@ export const ContactForm = ({ contactList, setValue }) => {
         return;
       }
     }
-
-    setValue(addedName, addedPhone);
 
     setTimeout(() => {
       form.reset();

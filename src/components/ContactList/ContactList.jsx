@@ -1,4 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteContact } from '../../redux/actions';
+import { filterValue, getContacts } from '../../redux/selectors';
+
 import {
   StyledButton,
   StyledContactList,
@@ -9,21 +13,52 @@ import {
   StyledInfoWrapper,
 } from './ContactList.styled';
 
-export const ContactList = ({ list, deleteContact }) => {
+const getContactList = (filter, contacts) => {
+  if (!filter) {
+    return contacts;
+  } else {
+    return contacts.filter(
+      contact =>
+        contact.name.toLowerCase().includes(filter.toLowerCase()) ||
+        contact.number.includes(filter)
+    );
+  }
+};
+
+export const ContactList = () => {
+  const dispatch = useDispatch();
+
+  const handleDelete = id => {
+    dispatch(deleteContact(id));
+  };
+
+  const filter = useSelector(filterValue);
+  const contacts = useSelector(getContacts);
+
+  const contactList = useMemo(() => {
+    return getContactList(filter, contacts).sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  }, [filter, contacts]);
+
   return (
     <StyledContactList>
-      {!list?.length ? (
+      {!contactList?.length ? (
         <StyledEmptyIdentificatorMessage>
           Currently, no contacts in your list
         </StyledEmptyIdentificatorMessage>
       ) : (
-        list.map(item => (
+        contactList.map(item => (
           <StyledContactListItem key={item.id}>
             <StyledInfoWrapper>
               <StyledContactName> {item.name}</StyledContactName>
               <StyledContactPhone> {item.number}</StyledContactPhone>
             </StyledInfoWrapper>
-            <StyledButton onClick={() => deleteContact(item.id)}>
+            <StyledButton
+              onClick={() => {
+                handleDelete(item.id);
+              }}
+            >
               Delete
             </StyledButton>
           </StyledContactListItem>
