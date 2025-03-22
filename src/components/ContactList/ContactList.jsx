@@ -1,7 +1,11 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from '../../redux/actions';
-import { filterValue, getContacts } from '../../redux/selectors';
+
+import {
+  deleteContact,
+  filterValue,
+  getContacts,
+} from '../../redux/phonebook/slice';
 
 import {
   StyledButton,
@@ -36,7 +40,7 @@ export const ContactList = () => {
   const contacts = useSelector(getContacts);
 
   const contactList = useMemo(() => {
-    return getContactList(filter, contacts).sort((a, b) =>
+    return [...getContactList(filter, contacts)].sort((a, b) =>
       a.name.localeCompare(b.name)
     );
   }, [filter, contacts]);

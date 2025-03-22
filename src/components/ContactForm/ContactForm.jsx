@@ -1,8 +1,6 @@
 import React from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { getContacts } from '../../redux/selectors';
-import { addContact } from '../../redux/actions';
 
 import ReactInputMask from 'react-input-mask';
 
@@ -13,6 +11,7 @@ import {
   StyledInputsWrapper,
   StyledLabel,
 } from './ContactForm.styled';
+import { addContact, getContacts } from '../../redux/phonebook/slice';
 
 export const ContactForm = () => {
   const dispatch = useDispatch();
@@ -25,14 +24,14 @@ export const ContactForm = () => {
     const addedPhone = form.elements.number.value;
 
     const newContact = { name: addedName, number: addedPhone };
-    dispatch(addContact(newContact));
 
     const currentContacts = contactList || [];
 
-    const exisingContact = currentContacts.some(
+    const existingContact = currentContacts.some(
       contact => contact.name === addedName
     );
-    if (exisingContact) {
+
+    if (existingContact) {
       alert(`${addedName} is already in contacts`);
       return;
     }
@@ -42,17 +41,19 @@ export const ContactForm = () => {
     );
 
     if (existingPhoneNumber) {
-      const existingContact = currentContacts.find(
+      const contactWithSameNumber = currentContacts.find(
         contact => contact.number === addedPhone
       );
 
-      if (existingContact) {
+      if (contactWithSameNumber) {
         alert(
-          `${addedPhone} is already in contacts under the name ${existingContact.name}`
+          `${addedPhone} is already in contacts under the name ${contactWithSameNumber.name}`
         );
         return;
       }
     }
+
+    dispatch(addContact(newContact));
 
     setTimeout(() => {
       form.reset();

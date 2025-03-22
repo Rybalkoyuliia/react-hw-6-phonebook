@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useDispatch } from 'react-redux';
 
-import { filterContacts } from '../../redux/actions';
+import { filterContacts } from '../../redux/phonebook/slice';
 
 import { StyledLabel, StyledSearchInput } from './SearchField.styled';
 
